@@ -4,15 +4,27 @@ import java.util.*;
 
 public class Track
 {
-    private String name = "Unknown";
-    private String country = "Unknown";
+    private int id;
+    private String name;
+    private String country;
     private ArrayList<Racer>winners;
 
-    public Track(String t_name, String t_country)
+    public Track(int _id, String t_name, String t_country)
     {
+        id = _id;
         name = t_name;
         country = t_country;
         winners = new ArrayList<Racer>();
+    }
+
+    public int getId()
+    {
+        return id;
+    }
+
+    public void setId(int _id)
+    {
+        id = _id;
     }
 
     public String getName()

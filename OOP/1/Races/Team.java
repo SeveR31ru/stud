@@ -4,19 +4,32 @@ import java.util.*;
 
 public class Team
 {
+    private int id;
     private String name;
     private ArrayList<Racer>racers;
 
-    public Team(String t_name, ArrayList<Racer> t_racers)
+    public Team(int _id, String t_name, ArrayList<Racer> t_racers)
     {
+        id = _id;
         name = t_name;
         racers = t_racers;
     }
 
-    public Team(String t_name)
+    public Team(int _id, String t_name)
     {
+        id = _id;
         name = t_name;
         racers = new ArrayList<Racer>();
+    }
+
+    public int getId()
+    {
+        return id;
+    }
+
+    public void setId(int _id)
+    {
+        id = _id;
     }
 
     public String getName()

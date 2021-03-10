@@ -3,8 +3,8 @@ package Races;
 public class Racer
 {
     private int id;
-    private String name = "Unknown";
-    private String surname = "Unknown";
+    private String name;
+    private String surname;
     private Team team;
     private int score = 0;
 
