@@ -1,4 +1,6 @@
 import Races.*;
+
+import java.sql.*;
 import java.util.*;
 
 public class Handler
@@ -15,8 +17,73 @@ public class Handler
         team_test.addRacer(r_test);
         racers.add(r_test);
         racers.add(r_test2);
-        Competition c_test = new Competition(0, "Rally", new Date(), t_test, racers);
+        Competition c_test = new Competition(0, "Rally", new java.util.Date(), t_test, racers);
 
-        System.out.println(c_test);
+        System.out.println(c_test + "\n\nTables in database:");
+
+        MyConnection mysqlCon = new MyConnection();
+        mysqlCon.makeConnection();
+        ResultSet rs = mysqlCon.makeQuery("show tables;");
+        try
+        {
+            while(rs.next())
+                System.out.println(rs.getString(1));
+        }
+        catch(SQLException sqlEx)
+        {
+            sqlEx.printStackTrace();
+        }
+        mysqlCon.closeConnection();
+    }
+
+    private static class MyConnection
+    {
+        private static final String url = "jdbc:mysql://localhost:3306/racers";
+        private static final String user = "root";
+        private static final String password = "password";
+        private Connection connection;
+
+        public MyConnection() {}
+
+        public void makeConnection()
+        {
+            try
+            {
+                connection = DriverManager.getConnection(url, user, password);
+            }
+            catch(Exception e)
+            {
+                System.out.println(e);
+            }
+        }
+
+        public Connection getConnection()
+        {
+            return connection;
+        }
+
+        public ResultSet makeQuery(String query)
+        {
+            ResultSet rs = null;
+            try
+            {
+                Statement stmt = connection.createStatement();
+                rs = stmt.executeQuery(query);
+            }
+            catch(SQLException sqlEx)
+            {
+                sqlEx.printStackTrace();
+            }
+            return rs;
+        }
+
+        public void closeConnection()
+        {
+            try
+            {
+                connection.close();
+            }
+            catch(SQLException sqlEx){}
+        }
     }
 }
