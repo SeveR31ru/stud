@@ -1,3 +1,2 @@
 del *.class
-javac *.java
-javac ./*.java
+javac -cp ./lib/mysql-connector-java-8.0.22.jar ./Races/*.java Handler.java
