@@ -1,5 +1,5 @@
-Races\Racer.class
-Handler.class
-Races\Competition.class
 Races\Team.class
 Races\Track.class
+Handler.class
+Races\Competition.class
+Races\Racer.class
