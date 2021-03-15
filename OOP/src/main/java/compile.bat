@@ -1,1 +1,1 @@
-javac -encoding utf-8 -cp .:./lib/mysql-connector-java-8.0.22.jar Handler.java ./Races/*.java
+javac -encoding utf-8 -cp .:./lib/*.jar Handler.java ./Races/*.java
