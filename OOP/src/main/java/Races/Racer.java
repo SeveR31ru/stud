@@ -1,11 +1,22 @@
 package Races;
 
+import javax.annotation.processing.Generated;
+import javax.persistance.*;
+
+@Entity
+@Table(name = "racers")
 public class Racer
 {
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name="id")
     private int id;
+    @Column(name="name")
     private String name;
+    @Column(name="surname")
     private String surname;
     private Team team;
+    @Column(name="score")
     private int score = 0;
 
     public Racer(int _id, String _name, String _surname, Team _team)
