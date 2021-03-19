@@ -5,6 +5,7 @@ import java.util.*;
 
 public class Handler
 {
+
     public static void main(String[] args)
     {
         ArrayList<Racer>racers = new ArrayList<Racer>();
@@ -19,15 +20,15 @@ public class Handler
         racers.add(r_test2);
         Competition c_test = new Competition(0, "Rally", new java.util.Date(), t_test, racers);
 
-        System.out.println(c_test + "\n\nTables in database:");
+        System.out.println(c_test + "\n\nRacers in database:");
 
         MyConnection mysqlCon = new MyConnection();
         mysqlCon.makeConnection();
-        ResultSet rs = mysqlCon.makeQuery("show tables;");
+        ResultSet rs = mysqlCon.makeQuery("select name, surname from racers;");
         try
         {
             while(rs.next())
-                System.out.println(rs.getString(1));
+                System.out.println(rs.getString(1) + " " + rs.getString(2));
         }
         catch(SQLException sqlEx)
         {
