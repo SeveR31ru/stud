@@ -1,13 +1,27 @@
 package Races;
 
+import javax.persistence.*;
 import java.util.*;
 
+@Entity
+@Table(name="tracks")
 public class Track
 {
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name="id")
     private int id;
+
+    @Column(name="name")
     private String name;
+
+    @Column(name="country")
     private String country;
+
+    @OneToMany (mappedBy="track", fetch=FetchType.EAGER)
     private ArrayList<Racer>winners;
+
+    public Track() {}
 
     public Track(int _id, String t_name, String t_country)
     {

@@ -1,15 +1,35 @@
 package Races;
 
+import javax.persistence.*;
 import java.util.*;
 
+@Entity
+@Table(name="competitions")
 public class Competition
 {
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name="id")
     private int id;
+
+    @Column(name="name")
     private String name;
+
+    @Column(name="date")
     private Date date;
+
+    @ManyToOne (optional=false, cascade=CascadeType.ALL)
+    @JoinColumn (name="trackid")
     private Track track;
+
+    @OneToMany (mappedBy="competition", fetch=FetchType.EAGER)
     private ArrayList<Racer>racers;
+
+    @OneToOne (optional=false, cascade=CascadeType.ALL)
+    @JoinColumn (name="winnerid")
     private Racer winner;
+
+    public Competition() {}
 
     public Competition(int _id, String _name, Date _date, Track _track, ArrayList<Racer> _racers)
     {

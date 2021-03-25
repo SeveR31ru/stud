@@ -2,89 +2,72 @@ import Races.*;
 
 import java.sql.*;
 import java.util.*;
+import org.hibernate.*;
+import org.hibernate.cfg.*;
 
 public class Handler
 {
-
     public static void main(String[] args)
     {
-        ArrayList<Racer>racers = new ArrayList<Racer>();
-        Track t_test = new Track(0, "Sarta", "France");
-        Team team_test = new Team(0, "The Greatest Racers");
-        Racer r_test = new Racer(0, "Ken", "Block", null);
-        r_test.setScore(50);
-        Racer r_test2 = new Racer(0, "John", "Doe", null);
-        r_test2.setScore(20);
-        team_test.addRacer(r_test);
-        racers.add(r_test);
-        racers.add(r_test2);
-        Competition c_test = new Competition(0, "Rally", new java.util.Date(), t_test, racers);
+        SessionFactory factory = new Configuration()
+								.configure("hibernate.cfg.xml")
+                                .addAnnotatedClass(Racer.class)
+                                .addAnnotatedClass(Team.class)
+                                .buildSessionFactory();
+                                
+        Session session = factory.getCurrentSession();
+        try {		
+            session.beginTransaction();
+            List<Racer> racers = new ArrayList<Racer>( session.createCriteria(Racer.class).list() );
+            List<Team> teams = new ArrayList<Team>( session.createCriteria(Team.class).list() );
+            teams = removeCopies(teams);
+            session.getTransaction().commit();
 
-        System.out.println(c_test + "\n\nRacers in database:");
+            System.out.println("\n===========RACERS===========\n");
+            if(racers != null)
+                for(Racer racer : racers)
+                    System.out.println(racer);
 
-        MyConnection mysqlCon = new MyConnection();
-        mysqlCon.makeConnection();
-        ResultSet rs = mysqlCon.makeQuery("select name, surname from racers;");
-        try
-        {
-            while(rs.next())
-                System.out.println(rs.getString(1) + " " + rs.getString(2));
-        }
-        catch(SQLException sqlEx)
-        {
-            sqlEx.printStackTrace();
-        }
-        mysqlCon.closeConnection();
+            System.out.println("\n===========TEAMS===========\n");
+            if(teams != null)
+                for(Team team : teams)
+                    System.out.println(team);
+
+            System.out.println("\n===========================\n");
+            
+            
+			/*System.out.println("Creating new racer object...");
+            Team team = new Team(1, "Test");
+            Racer racer = new Racer(2, "Paul", "Wall", team);
+            Racer racer2 = new Racer(3, "Wes", "FVA", team);
+            team.addRacer(racer);
+            team.addRacer(racer2);
+			session.beginTransaction();
+	
+			// save the racer object
+            System.out.println("Saving the racer...");
+            session.save(team);
+			session.save(racer);
+			session.save(racer2);
+			
+			// commit transaction
+			session.getTransaction().commit();
+			
+			System.out.println("Done!");*/
+		}
+		finally {
+			factory.close();
+		}
     }
 
-    private static class MyConnection
+    private static <T> List<T> removeCopies(List<T> list)
     {
-        private static final String url = "jdbc:mysql://localhost:3306/racers";
-        private static final String user = "root";
-        private static final String password = "password";
-        private Connection connection;
-
-        public MyConnection() {}
-
-        public void makeConnection()
+        List<T> resultList = new ArrayList<T>();
+        for(T el : list)
         {
-            try
-            {
-                connection = DriverManager.getConnection(url, user, password);
-            }
-            catch(Exception e)
-            {
-                System.out.println(e);
-            }
+            if(!resultList.contains(el))
+                resultList.add(el);
         }
-
-        public Connection getConnection()
-        {
-            return connection;
-        }
-
-        public ResultSet makeQuery(String query)
-        {
-            ResultSet rs = null;
-            try
-            {
-                Statement stmt = connection.createStatement();
-                rs = stmt.executeQuery(query);
-            }
-            catch(SQLException sqlEx)
-            {
-                sqlEx.printStackTrace();
-            }
-            return rs;
-        }
-
-        public void closeConnection()
-        {
-            try
-            {
-                connection.close();
-            }
-            catch(SQLException sqlEx){}
-        }
+        return resultList;
     }
 }

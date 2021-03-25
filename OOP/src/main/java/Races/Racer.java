@@ -17,11 +17,14 @@ public class Racer
     @Column(name="surname")
     private String surname;
 
-
+    @ManyToOne (optional=false)
+    @JoinColumn (name="teamid")
     private Team team;
 
     @Column(name="score")
     private int score = 0;
+
+    public Racer() {}
 
     public Racer(int _id, String _name, String _surname, Team _team)
     {
