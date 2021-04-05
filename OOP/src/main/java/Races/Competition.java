@@ -18,26 +18,33 @@ public class Competition
     @Column(name="date")
     private Date date;
 
-    @ManyToOne (optional=false, cascade=CascadeType.ALL)
-    @JoinColumn (name="trackid")
+    @OneToOne (optional=false)
+    //@JoinColumn (name="trackid")
     private Track track;
 
-    @OneToMany (mappedBy="competition", fetch=FetchType.EAGER)
-    private ArrayList<Racer>racers;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Racer>racers;
 
-    @OneToOne (optional=false, cascade=CascadeType.ALL)
-    @JoinColumn (name="winnerid")
+    @OneToOne (optional=false)
+    //@JoinColumn (name="id")
     private Racer winner;
 
     public Competition() {}
 
-    public Competition(int _id, String _name, Date _date, Track _track, ArrayList<Racer> _racers)
+    public Competition(String _name, Date _date, Track _track, List<Racer> _racers)
     {
-        id = _id;
         name = _name;
         date = _date;
         track = _track;
         racers = _racers;
+    }
+
+    public Competition(String _name, Date _date, Track _track)
+    {
+        name = _name;
+        date = _date;
+        track = _track;
+        racers = new ArrayList<Racer>();
     }
 
     public int getId()
@@ -45,10 +52,10 @@ public class Competition
         return id;
     }
 
-    public void setId(int _id)
+    /*public void setId(int _id)
     {
         id = _id;
-    }
+    }*/
 
     public String getName()
     {
@@ -143,11 +150,11 @@ public class Competition
     @Override
     public String toString()
     {
-        String out = "Competition " + name + ". Track: " + track + ". Date: " + date + "\nList of racers:";
-        for(int i = 0; i < racers.size(); i++)
+        String out = "Competition " + name + ". Track: " + track + ". Date: " + date;// + "\nList of racers:";
+        /*for(int i = 0; i < racers.size(); i++)
         {
             out += "\nRacer: " + racers.get(i) + ". " + racers.get(i).getTeam();
-        }
+        }*/
         return out;
     }
 }

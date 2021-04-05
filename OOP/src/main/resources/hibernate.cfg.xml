@@ -26,6 +26,8 @@
 	
 		<mapping class="Races.Racer"/> 
 		<mapping class="Races.Team"/> 
+		<mapping class="Races.Track"/> 
+		<mapping class="Races.Competition"/> 
 	</session-factory>
 
 </hibernate-configuration>

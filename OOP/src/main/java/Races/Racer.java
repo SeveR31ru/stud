@@ -26,9 +26,8 @@ public class Racer
 
     public Racer() {}
 
-    public Racer(int _id, String _name, String _surname, Team _team)
+    public Racer(String _name, String _surname, Team _team)
     {
-        id = _id;
         name = _name;
         surname = _surname;
         team = _team;
@@ -39,10 +38,10 @@ public class Racer
         return id;
     }
 
-    public void setId(int _id)
+    /*public void setId(int _id)
     {
         id = _id;
-    }
+    }*/
 
     public String getName()
     {

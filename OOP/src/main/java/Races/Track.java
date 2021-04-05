@@ -18,14 +18,13 @@ public class Track
     @Column(name="country")
     private String country;
 
-    @OneToMany (mappedBy="track", fetch=FetchType.EAGER)
-    private ArrayList<Racer>winners;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Racer>winners;
 
     public Track() {}
 
-    public Track(int _id, String t_name, String t_country)
+    public Track(String t_name, String t_country)
     {
-        id = _id;
         name = t_name;
         country = t_country;
         winners = new ArrayList<Racer>();
@@ -36,10 +35,10 @@ public class Track
         return id;
     }
 
-    public void setId(int _id)
+    /*public void setId(int _id)
     {
         id = _id;
-    }
+    }*/
 
     public String getName()
     {
