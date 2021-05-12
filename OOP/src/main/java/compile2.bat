@@ -1,0 +1,1 @@
+javac -encoding utf-8 -cp .:./lib/*.jar GUI.java ./Races/*.java
