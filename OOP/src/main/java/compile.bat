@@ -1,1 +1,0 @@
-javac -encoding utf-8 -cp .:./lib/*.jar Handler.java ./Races/*.java
