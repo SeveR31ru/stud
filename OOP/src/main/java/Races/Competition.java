@@ -22,7 +22,7 @@ public class Competition
     //@JoinColumn (name="trackid")
     private Track track;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Racer>racers;
 
     @OneToOne (optional=false)

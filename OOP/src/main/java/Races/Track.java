@@ -18,16 +18,12 @@ public class Track
     @Column(name="country")
     private String country;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Racer>winners;
-
     public Track() {}
 
     public Track(String t_name, String t_country)
     {
         name = t_name;
         country = t_country;
-        winners = new ArrayList<Racer>();
     }
 
     public int getId()
@@ -58,42 +54,6 @@ public class Track
     public void setCountry(String newCountry)
     {
         country = newCountry;
-    }
-
-    public ArrayList<Racer> getWinners()
-    {
-        return new ArrayList<Racer>(winners);
-    }
-
-    public boolean setWinners(ArrayList<Racer>newWinners)
-    {
-        if(newWinners != null)
-        {
-            winners = newWinners;
-            return true;
-        }
-        return false;
-    }
-
-    public boolean addWinner(Racer newWinner)
-    {
-        if(newWinner != null)
-        {
-            winners.add(newWinner);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean removeWinner(Racer racer)
-    {
-        int index = winners.indexOf(racer);
-        if(index != -1)
-        {
-            winners.remove(index);
-            return true;
-        }
-        return false;
     }
 
     @Override

@@ -111,7 +111,12 @@ public class RaceHandler
                                 .buildSessionFactory();
                                 
         session = factory.getCurrentSession();
-        try {		
+        try 
+        {		
+            /*racers = loadRacers();
+            teams = loadTeams();
+            tracks = loadTracks();
+            comps = loadComps();*/
             session.beginTransaction();
             racers = new ArrayList<Racer>( session.createCriteria(Racer.class).list() );
             teams = new ArrayList<Team>( session.createCriteria(Team.class).list() );
@@ -179,6 +184,110 @@ public class RaceHandler
 		finally {
 			factory.close();
 		}
+    }
+
+    public List<Racer> loadRacers()
+    {
+        List<Racer> loadedRacers = null;
+        factory = new Configuration()
+								.configure("hibernate.cfg.xml")
+                                .addAnnotatedClass(Racer.class)
+                                .buildSessionFactory();
+                                
+        session = factory.getCurrentSession();
+        try 
+        {		
+            session.beginTransaction();
+            loadedRacers = new ArrayList<Racer>( session.createCriteria(Racer.class).list() );
+            session.getTransaction().commit();
+        }
+        catch(Throwable t)
+        {
+            System.out.println(t);
+        }
+        finally
+        {
+            factory.close();
+        }
+        return removeCopies(loadedRacers);
+    }
+    
+    public List<Team> loadTeams()
+    {
+        List<Team> loadedTeams = null;
+        factory = new Configuration()
+								.configure("hibernate.cfg.xml")
+                                .addAnnotatedClass(Team.class)
+                                .buildSessionFactory();
+                                
+        session = factory.getCurrentSession();
+        try 
+        {		
+            session.beginTransaction();
+            loadedTeams = new ArrayList<Team>( session.createCriteria(Team.class).list() );
+            session.getTransaction().commit();
+        }
+        catch(Throwable t)
+        {
+            System.out.println(t);
+        }
+        finally
+        {
+            factory.close();
+        }
+        return removeCopies(loadedTeams);
+    }
+    
+    public List<Track> loadTracks()
+    {
+        List<Track> loadedTracks = null;
+        factory = new Configuration()
+								.configure("hibernate.cfg.xml")
+                                .addAnnotatedClass(Track.class)
+                                .buildSessionFactory();
+                                
+        session = factory.getCurrentSession();
+        try 
+        {		
+            session.beginTransaction();
+            loadedTracks = new ArrayList<Track>( session.createCriteria(Track.class).list() );
+            session.getTransaction().commit();
+        }
+        catch(Throwable t)
+        {
+            System.out.println(t);
+        }
+        finally
+        {
+            factory.close();
+        }
+        return removeCopies(loadedTracks);
+    }
+    
+    public List<Competition> loadComps()
+    {
+        List<Competition> loadedComps = null;
+        factory = new Configuration()
+								.configure("hibernate.cfg.xml")
+                                .addAnnotatedClass(Competition.class)
+                                .buildSessionFactory();
+                                
+        session = factory.getCurrentSession();
+        try 
+        {		
+            session.beginTransaction();
+            loadedComps = new ArrayList<Competition>( session.createCriteria(Competition.class).list() );
+            session.getTransaction().commit();
+        }
+        catch(Throwable t)
+        {
+            System.out.println(t);
+        }
+        finally
+        {
+            factory.close();
+        }
+        return removeCopies(loadedComps);
     }
 
     private <T> List<T> removeCopies(List<T> list)

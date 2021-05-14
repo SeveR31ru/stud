@@ -1,4 +1,4 @@
-//import Races.*;
+import Races.*;
 
 import java.util.*;
 import java.util.List;
@@ -7,12 +7,6 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
-
-import Races.Competition;
-import Races.RaceHandler;
-import Races.Racer;
-import Races.Team;
-import Races.Track;
 
 public class GUI
 {
@@ -41,10 +35,11 @@ class MainMenu
     private JTable tracksTable;
     private JScrollPane tracksPane;
     private TrackViewer trackViewer;
-
+    
     private DefaultTableModel compsModel;
     private JTable compsTable;
     private JScrollPane compsPane;
+    private CompViewer compViewer;
 
     public MainMenu()
     {
@@ -96,6 +91,9 @@ class MainMenu
         competitions.addActionListener(
             event -> {
                 System.out.println("Competitions here");
+                if(compViewer == null)
+                    compViewer = new CompViewer(mainFrame, rHandler.getComps());
+                compViewer.setVisible(true);
             }
         );
 
@@ -138,15 +136,17 @@ class MainMenu
                 racerInfo[0] = ("" + racer.getId());
                 racerInfo[1] = (racer.getName());
                 racerInfo[2] = (racer.getSurname());
-                racerInfo[3] = (racer.getTeam().getName());
+                racerInfo[3] = (racer.getTeam().getName() + " (ID " + racer.getTeam().getId() + ")");
                 racerInfo[4] = ("" + racer.getScore());
                 racersModel.addRow(racerInfo);
             }
         }
         racersTable = new JTable(racersModel);
+        racersTable.getColumnModel().getColumn(0).setMaxWidth(100);
         racersTable.setEnabled(true);
         racersTable.setAutoCreateRowSorter(true);    //сортировка в одну строку? Там можно было что ли?!?!?!
         racersPane = new JScrollPane(racersTable);
+        racersPane.setPreferredSize(new Dimension(630, 380));
 
         //============================TEAMS============================//
         String[] teamsColumns = {"ID", "NAME", "RACERS IN TEAM"};
@@ -171,12 +171,14 @@ class MainMenu
             }
         }
         teamsTable = new JTable(teamsModel);
+        teamsTable.getColumnModel().getColumn(0).setMaxWidth(100);
         teamsTable.setEnabled(true);
         teamsTable.setAutoCreateRowSorter(true);    //сортировка в одну строку? Там можно было что ли?!?!?!
         teamsPane = new JScrollPane(teamsTable);
+        teamsPane.setPreferredSize(new Dimension(530, 380));
 
         //============================TRACKS============================//
-        String[] tracksColumns = {"ID", "NAME", "COUNTRY", "NUMBER OF WINNERS"};
+        String[] tracksColumns = {"ID", "NAME", "COUNTRY"};
         tracksModel = new DefaultTableModel(){
             @Override
             public boolean isCellEditable(int i, int i1) {
@@ -187,24 +189,25 @@ class MainMenu
         List<Track> tracksList = rHandler.getTracks();
         if(tracksList != null)
         {
-            String[] trackInfo = new String[4];
+            String[] trackInfo = new String[3];
             for(int i = 0; i < tracksList.size(); i++)
             {
                 Track track = tracksList.get(i);
                 trackInfo[0] = ("" + track.getId());
                 trackInfo[1] = (track.getName());
                 trackInfo[2] = (track.getCountry());
-                trackInfo[3] = ("" + track.getWinners().size());
                 tracksModel.addRow(trackInfo);
             }
         }
         tracksTable = new JTable(tracksModel);
+        tracksTable.getColumnModel().getColumn(0).setMaxWidth(100);
         tracksTable.setEnabled(true);
         tracksTable.setAutoCreateRowSorter(true);    //сортировка в одну строку? Там можно было что ли?!?!?!
         tracksPane = new JScrollPane(tracksTable);
+        tracksPane.setPreferredSize(new Dimension(530, 380));
 
         //============================COMPETITIONS============================//
-        String[] compsColumns = {"ID", "NAME", "DATE", "TRACK", "NUMBER OF RACERS", "WINNER"};
+        String[] compsColumns = {"ID", "NAME", "DATE", "TRACK", "RACERS", "WINNER"};
         compsModel = new DefaultTableModel(){
             @Override
             public boolean isCellEditable(int i, int i1) {
@@ -224,14 +227,20 @@ class MainMenu
                 compInfo[2] = ("" + comp.getDate());
                 compInfo[3] = (comp.getTrack().getName());
                 compInfo[4] = (""+ comp.getRacers().size());
-                compInfo[5] = (""+ comp.getWinner().getName() + " " + comp.getWinner().getSurname());
+                compInfo[5] = (""+ comp.getWinner().getName() + " " + comp.getWinner().getSurname() + " (ID " + comp.getWinner().getId() + ")");
                 compsModel.addRow(compInfo);
             }
         }
         compsTable = new JTable(compsModel);
+        compsTable.getColumnModel().getColumn(0).setMaxWidth(100);
+        compsTable.getColumnModel().getColumn(4).setMaxWidth(70);
         compsTable.setEnabled(true);
         compsTable.setAutoCreateRowSorter(true);    //сортировка в одну строку? Там можно было что ли?!?!?!
+        /*compsTable.getColumnModel().getColumn(2).setPreferredWidth(200);    //DATE column
+        compsTable.getColumnModel().getColumn(4).setPreferredWidth(200);    //NUMBER OF RACERS column
+        compsTable.getColumnModel().getColumn(5).setPreferredWidth(200);    //NUMBER OF RACERS column*/
         compsPane = new JScrollPane(compsTable);
+        compsPane.setPreferredSize(new Dimension(780, 380));
     }
 
     class RacerViewer extends JDialog
@@ -242,7 +251,7 @@ class MainMenu
         public RacerViewer(JFrame owner, List<Racer>_racers)
         {
             super(owner, "Racers", false);
-            this.setPreferredSize(new Dimension(550, 400));
+            this.setPreferredSize(new Dimension(650, 400));
             this.racers = _racers;
 
             JMenuBar menubar = new JMenuBar();
@@ -257,6 +266,13 @@ class MainMenu
             } );
 
             racerMenu.add(openTeam);
+
+            JMenuItem findRacer = new JMenuItem("Find racer");
+            findRacer.addActionListener(
+            event -> {
+                System.out.println("Find racer here");
+            } );
+            racerMenu.add(findRacer);
 
             JMenuItem editRacer = new JMenuItem("Edit racer");
             editRacer.addActionListener(
@@ -315,6 +331,13 @@ class MainMenu
             } );
             teamMenu.add(showRacers);
 
+            JMenuItem findTeam = new JMenuItem("Find team");
+            findTeam.addActionListener(
+            event -> {
+                System.out.println("Find team here");
+            } );
+            teamMenu.add(findTeam);
+
             JMenuItem editTeam = new JMenuItem("Edit team");
             editTeam.addActionListener(
             event -> {
@@ -362,13 +385,13 @@ class MainMenu
 
             JMenu trackMenu = new JMenu("Actions");
             menubar.add(trackMenu);
-            
-            JMenuItem showWinners = new JMenuItem("Show winners on track");
-            showWinners.addActionListener(
+
+            JMenuItem findTrack = new JMenuItem("Find track");
+            findTrack.addActionListener(
             event -> {
-                System.out.println("Show winners on track here");
+                System.out.println("Find track here");
             } );
-            trackMenu.add(showWinners);
+            trackMenu.add(findTrack);
 
             JMenuItem editTrack = new JMenuItem("Edit track");
             editTrack.addActionListener(
@@ -396,6 +419,68 @@ class MainMenu
             TeamV_panel = new JPanel();
             TeamV_panel.add(tracksPane);
             this.add(TeamV_panel);
+
+            this.pack();
+        }
+    }
+
+    class CompViewer extends JDialog
+    {
+        private List<Competition> comps;
+        private JPanel CV_panel;
+
+        public CompViewer(JFrame owner, List<Competition>_comps)
+        {
+            super(owner, "Competitions", false);
+            this.setPreferredSize(new Dimension(800, 400));
+            this.comps = _comps;
+
+            JMenuBar menubar = new JMenuBar();
+            this.setJMenuBar(menubar);
+
+            JMenu compMenu = new JMenu("Actions");
+            menubar.add(compMenu);
+
+            JMenuItem showRacers = new JMenuItem("Show racers in competition");
+            showRacers.addActionListener(
+            event -> {
+                System.out.println("Show racers in competition here");
+            } );
+            compMenu.add(showRacers);
+
+            JMenuItem findComp = new JMenuItem("Find competition");
+            findComp.addActionListener(
+            event -> {
+                System.out.println("Find competition here");
+            } );
+            compMenu.add(findComp);
+
+            JMenuItem editCompetition = new JMenuItem("Edit competition");
+            editCompetition.addActionListener(
+            event -> {
+                System.out.println("Edit competition here");
+            } );
+            compMenu.add(editCompetition);
+
+            JMenuItem addCompetition = new JMenuItem("Add competition");
+            addCompetition.addActionListener(
+            event -> {
+                System.out.println("Add competition here");
+            } );
+            compMenu.add(addCompetition);
+
+            JMenuItem removeCompetition = new JMenuItem("Remove competition");
+            removeCompetition.addActionListener(
+            event -> {
+                System.out.println("Remove competition here");
+            } );
+            compMenu.add(removeCompetition);
+
+            this.setJMenuBar(menubar);
+
+            CV_panel = new JPanel();
+            CV_panel.add(compsPane);
+            this.add(CV_panel);
 
             this.pack();
         }

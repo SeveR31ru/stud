@@ -10,8 +10,6 @@ CREATE TABLE `teams` (`id` int(11) PRIMARY KEY AUTO_INCREMENT, `name` TEXT) AUTO
 CREATE TABLE `tracks` (`id` int(11) PRIMARY KEY AUTO_INCREMENT, `name` TEXT,
  `country` TEXT) AUTO_INCREMENT=1;
  
-CREATE TABLE `tracks_racers` (`Track_id` int(11), `winners_id` int(11));
- 
 CREATE TABLE `competitions` (`id` int(11) PRIMARY KEY AUTO_INCREMENT, `name` TEXT, `date` DATE,
  `track_id` int(11), `winner_id` int(11)) AUTO_INCREMENT=1;
  

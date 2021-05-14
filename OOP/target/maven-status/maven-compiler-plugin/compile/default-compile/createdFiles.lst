@@ -1,6 +1,7 @@
 MainMenu$3.class
 MainMenu$1.class
 MainMenu.class
+MainMenu$CompViewer.class
 MainMenu$RacerViewer.class
 Races\Competition.class
 MainMenu$TeamViewer.class
