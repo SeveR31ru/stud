@@ -9,7 +9,7 @@
 		
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
-			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/racers" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/races" />
 			<property name="javax.persistence.jdbc.user" value="root" />
 			<property name="javax.persistence.jdbc.password" value="password" />
 			<property name="hibernate.show_sql" value="true" />

@@ -121,7 +121,12 @@ class MainMenu
         String[] racersColumns = {"ID", "NAME", "SURNAME", "TEAM", "SCORE"};
         racersModel = new DefaultTableModel(){
             @Override
-            public boolean isCellEditable(int i, int i1) {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                if(columnIndex == 3)
+                {
+                    Racer toPrint = rHandler.getRacers().get(rowIndex);
+                    System.out.println("Show " + toPrint.getName() + "'s team");
+                }
                 return false;
             }
         };
@@ -152,7 +157,9 @@ class MainMenu
         String[] teamsColumns = {"ID", "NAME", "RACERS IN TEAM"};
         teamsModel = new DefaultTableModel(){
             @Override
-            public boolean isCellEditable(int i, int i1) {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                if(columnIndex == 2)
+                    System.out.println("Show racers in the team");
                 return false;
             }
         };
@@ -181,7 +188,7 @@ class MainMenu
         String[] tracksColumns = {"ID", "NAME", "COUNTRY"};
         tracksModel = new DefaultTableModel(){
             @Override
-            public boolean isCellEditable(int i, int i1) {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return false;
             }
         };
@@ -210,7 +217,13 @@ class MainMenu
         String[] compsColumns = {"ID", "NAME", "DATE", "TRACK", "RACERS", "WINNER"};
         compsModel = new DefaultTableModel(){
             @Override
-            public boolean isCellEditable(int i, int i1) {
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                if(columnIndex == 3)
+                    System.out.println("Show track's info");
+                else if(columnIndex == 4)
+                    System.out.println("Show racers in the competition");
+                else if(columnIndex == 5)
+                    System.out.println("Show winner in the competition");
                 return false;
             }
         };
@@ -259,13 +272,6 @@ class MainMenu
 
             JMenu racerMenu = new JMenu("Actions");
             menubar.add(racerMenu);
-            JMenuItem openTeam = new JMenuItem("Open racer's team");
-            openTeam.addActionListener(
-            event -> {
-                System.out.println("Racer's team here");
-            } );
-
-            racerMenu.add(openTeam);
 
             JMenuItem findRacer = new JMenuItem("Find racer");
             findRacer.addActionListener(
@@ -323,13 +329,6 @@ class MainMenu
 
             JMenu teamMenu = new JMenu("Actions");
             menubar.add(teamMenu);
-            
-            JMenuItem showRacers = new JMenuItem("Show racers in team");
-            showRacers.addActionListener(
-            event -> {
-                System.out.println("Show racers in team here");
-            } );
-            teamMenu.add(showRacers);
 
             JMenuItem findTeam = new JMenuItem("Find team");
             findTeam.addActionListener(
@@ -440,13 +439,6 @@ class MainMenu
 
             JMenu compMenu = new JMenu("Actions");
             menubar.add(compMenu);
-
-            JMenuItem showRacers = new JMenuItem("Show racers in competition");
-            showRacers.addActionListener(
-            event -> {
-                System.out.println("Show racers in competition here");
-            } );
-            compMenu.add(showRacers);
 
             JMenuItem findComp = new JMenuItem("Find competition");
             findComp.addActionListener(
