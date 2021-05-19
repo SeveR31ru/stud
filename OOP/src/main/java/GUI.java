@@ -115,9 +115,6 @@ class MainMenu
 
         mainFrame.pack();
         mainFrame.setVisible(true);
-
-        RacerFEA r = new RacerFEA(mainFrame, rHandler.getRacers(), 1);
-        r.setVisible(true);
     }
 
     private void PrepareTables()
@@ -539,19 +536,22 @@ class MainMenu
                     passFlag += 8;
                 else
                 {
-                    int needScore = Integer.parseInt(info[3].substring(1));
+                    int needScore;
                     if(info[3].charAt(0) == '>')
                     {
+                        needScore = Integer.parseInt(info[3].substring(1));
                         if(curRacer.getScore() > needScore)
                             passFlag += 8;
                     }
                     else if(info[3].charAt(0) == '<')
                     {
+                        needScore = Integer.parseInt(info[3].substring(1));
                         if(curRacer.getScore() < needScore)
                             passFlag += 8;
                     }
                     else
                     {
+                        needScore = Integer.parseInt(info[3]);
                         if(curRacer.getScore() == needScore)
                             passFlag += 8;
                     }
@@ -705,8 +705,7 @@ class MainMenu
             super(owner, "Racers", false);
             this.setPreferredSize(new Dimension(650, 400));
             this.racers = _racers;
-            if(editable)
-                addMenu();
+            addMenu(editable);
 
             RV_panel = new JPanel();
             RV_panel.add(_racersPane);
@@ -723,7 +722,7 @@ class MainMenu
             RV_panel.updateUI();
         }
 
-        private void addMenu()
+        private void addMenu(boolean editable)
         {
             JMenuBar menubar = new JMenuBar();
             this.setJMenuBar(menubar);
@@ -740,52 +739,53 @@ class MainMenu
                 System.out.println("Find racer here");
             } );
             racerMenu.add(findRacer);
+            if(editable)
+            {
+                JMenuItem editRacer = new JMenuItem("Edit racer");
+                editRacer.addActionListener(
+                event -> {
+                    if(selectedRow != -1)
+                    {
+                        if(rFEA != null)
+                            rFEA.removeAll();
+                        List<Racer>buff = new ArrayList<Racer>();
+                        buff.add(this.racers.get(selectedRow));
+                        rFEA = new RacerFEA(mainFrame, buff, 2);
+                        if(rFEA != null)
+                            rFEA.setVisible(true);
+                    }
+                    System.out.println("Edit racer here");
+                } );
 
-            JMenuItem editRacer = new JMenuItem("Edit racer");
-            editRacer.addActionListener(
-            event -> {
-                if(selectedRow != -1)
-                {
-                    if(rFEA != null)
-                        rFEA.removeAll();
-                    List<Racer>buff = new ArrayList<Racer>();
-                    buff.add(this.racers.get(selectedRow));
-                    rFEA = new RacerFEA(mainFrame, buff, 2);
+                racerMenu.add(editRacer);
+
+                JMenuItem addRacer = new JMenuItem("Add racer");
+                addRacer.addActionListener(
+                event -> {
+                    rFEA = new RacerFEA(mainFrame, this.racers, 1);
                     if(rFEA != null)
                         rFEA.setVisible(true);
-                }
-                System.out.println("Edit racer here");
-            } );
+                    System.out.println("Add racer here");
+                } );
+                
+                racerMenu.add(addRacer);
 
-            racerMenu.add(editRacer);
-
-            JMenuItem addRacer = new JMenuItem("Add racer");
-            addRacer.addActionListener(
-            event -> {
-                rFEA = new RacerFEA(mainFrame, this.racers, 1);
-                if(rFEA != null)
-                    rFEA.setVisible(true);
-                System.out.println("Add racer here");
-            } );
-            
-            racerMenu.add(addRacer);
-
-            JMenuItem removeRacer = new JMenuItem("Remove racer");
-            removeRacer.addActionListener(
-            event -> {
-                if(selectedRow != -1)
-                {
-                    Racer racer = this.racers.get(selectedRow);
-                    rHandler.removeRacer(racer);
-                    selectedRow = -1;
-                    LoadRacersTable();
-                    LoadTeamsTable();
-                    LoadCompsTable();
-                }
-                System.out.println("Remove racer here");
-            } );
-
-            racerMenu.add(removeRacer);
+                JMenuItem removeRacer = new JMenuItem("Remove racer");
+                removeRacer.addActionListener(
+                event -> {
+                    if(selectedRow != -1)
+                    {
+                        Racer racer = this.racers.get(selectedRow);
+                        rHandler.removeRacer(racer);
+                        selectedRow = -1;
+                        LoadRacersTable();
+                        LoadTeamsTable();
+                        LoadCompsTable();
+                    }
+                    System.out.println("Remove racer here");
+                } );
+                racerMenu.add(removeRacer);
+            }
             this.setJMenuBar(menubar);
         }
     }
@@ -794,6 +794,7 @@ class MainMenu
     {
         private List<Team> teams;
         private JPanel TV_panel;
+        private TeamFEA tFEA;
 
         public TeamViewer(JFrame owner, List<Team>_teams, JScrollPane _teamsPane, boolean editable)
         {
@@ -830,6 +831,9 @@ class MainMenu
             JMenuItem findTeam = new JMenuItem("Find team");
             findTeam.addActionListener(
             event -> {
+                tFEA = new TeamFEA(mainFrame, this.teams, 0);
+                if(tFEA != null)
+                    tFEA.setVisible(true);
                 System.out.println("Find team here");
             } );
             teamMenu.add(findTeam);
@@ -837,6 +841,16 @@ class MainMenu
             JMenuItem editTeam = new JMenuItem("Edit team");
             editTeam.addActionListener(
             event -> {
+                if(selectedRow != -1)
+                {
+                    if(tFEA != null)
+                        tFEA.removeAll();
+                    List<Team>buff = new ArrayList<Team>();
+                    buff.add(this.teams.get(selectedRow));
+                    tFEA = new TeamFEA(mainFrame, buff, 2);
+                    if(tFEA != null)
+                        tFEA.setVisible(true);
+                }
                 System.out.println("Add team here");
             } );
             teamMenu.add(editTeam);
@@ -844,6 +858,9 @@ class MainMenu
             JMenuItem addTeam = new JMenuItem("Add team");
             addTeam.addActionListener(
             event -> {
+                tFEA = new TeamFEA(mainFrame, this.teams, 1);
+                if(tFEA != null)
+                    tFEA.setVisible(true);
                 System.out.println("Add team here");
             } );
             teamMenu.add(addTeam);
@@ -871,6 +888,7 @@ class MainMenu
     {
         private List<Track> tracks;
         private JPanel TrackV_panel;
+        private TrackFEA tFEA;
 
         public TrackViewer(JFrame owner, List<Track>_tracks, JScrollPane _tracksPane, boolean editable)
         {
@@ -907,6 +925,9 @@ class MainMenu
             JMenuItem findTrack = new JMenuItem("Find track");
             findTrack.addActionListener(
             event -> {
+                tFEA = new TrackFEA(mainFrame, this.tracks, 0);
+                if(tFEA != null)
+                    tFEA.setVisible(true);
                 System.out.println("Find track here");
             } );
             trackMenu.add(findTrack);
@@ -914,6 +935,16 @@ class MainMenu
             JMenuItem editTrack = new JMenuItem("Edit track");
             editTrack.addActionListener(
             event -> {
+                if(selectedRow != -1)
+                {
+                    if(tFEA != null)
+                        tFEA.removeAll();
+                    List<Track>buff = new ArrayList<Track>();
+                    buff.add(this.tracks.get(selectedRow));
+                    tFEA = new TrackFEA(mainFrame, buff, 2);
+                    if(tFEA != null)
+                        tFEA.setVisible(true);
+                }
                 System.out.println("Edit track here");
             } );
             trackMenu.add(editTrack);
@@ -921,6 +952,9 @@ class MainMenu
             JMenuItem addTrack = new JMenuItem("Add track");
             addTrack.addActionListener(
             event -> {
+                tFEA = new TrackFEA(mainFrame, this.tracks, 1);
+                if(tFEA != null)
+                    tFEA.setVisible(true);
                 System.out.println("Add track here");
             } );
             trackMenu.add(addTrack);
@@ -1005,7 +1039,7 @@ class MainMenu
         }
     }
 
-    //============================EDIT/ADD============================//
+    //============================FIND/ADD/EDIT============================//
     class RacerFEA extends JDialog
     {
         private List<Racer> racers;
@@ -1028,6 +1062,24 @@ class MainMenu
                 teamid.setText("" + this.racers.get(0).getTeam().getId());
                 score.setText("" + this.racers.get(0).getScore());
                 button = new JButton("Edit");
+                button.addActionListener(
+                    event -> {
+                        Team team = rHandler.getTeamByID(Integer.parseInt(teamid.getText()));
+                        this.racers.get(0).setName(name.getText());
+                        this.racers.get(0).setSurname(surname.getText());
+                        this.racers.get(0).setScore(Integer.parseInt(score.getText()));
+                        if(this.racers.get(0).getTeam().getId() != team.getId())
+                        {
+                            this.racers.get(0).getTeam().removeRacer(this.racers.get(0));
+                            team.addRacer(this.racers.get(0));
+                        }
+                        rHandler.saveData(this.racers.get(0));
+                        rHandler.loadData();
+                        LoadRacersTable();
+                        LoadTeamsTable();
+                        LoadCompsTable();
+                    }
+                );
             }
             else if(type == 1)
             {
@@ -1047,7 +1099,13 @@ class MainMenu
             else
             {
                 button = new JButton("Find");
-                
+                button.addActionListener(
+                    event -> {
+                        String[] info = {
+                            name.getText(), surname.getText(), teamid.getText(), score.getText() };
+                        findObjs(this.racers, info);
+                    }
+                );
             }
 
             GridLayout GLout = new GridLayout();
@@ -1068,6 +1126,143 @@ class MainMenu
 
             RPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
             this.add(RPanel);
+            this.pack();
+        }
+    }
+
+    class TeamFEA extends JDialog
+    {
+        private List<Team> teams;
+        private JPanel TEPanel;
+
+        //type: 0 - find, 1 - add, 2 - edit
+        public TeamFEA(JFrame owner, List<Team>_teams, int type)
+        {
+            super(owner, "FEA Tracks", false);
+            this.teams = _teams;
+            JTextField name = new JTextField(20);
+            JButton button;
+            GridLayout GLout = new GridLayout();
+            GLout.setColumns(2);
+            GLout.setRows(5);
+            GLout.setVgap(10);
+            TEPanel = new JPanel();
+            TEPanel.setLayout(GLout);
+            TEPanel.add(new JLabel("Name of team: "));
+            TEPanel.add(name);
+            if(type == 2)
+            {
+                name.setText(this.teams.get(0).getName());
+                button = new JButton("Edit");
+                button.addActionListener(
+                    event -> {
+                        this.teams.get(0).setName(name.getText());
+                        rHandler.saveData(this.teams.get(0));
+                        rHandler.loadData();
+                        LoadRacersTable();
+                        LoadTeamsTable();
+                    }
+                );
+            }
+            else if(type == 1)
+            {
+                button = new JButton("Add");
+                button.addActionListener(
+                    event -> {
+                        Team team = new Team(name.getText());
+                        rHandler.addTeam(team);
+                        LoadTeamsTable();
+                    }
+                );
+            }
+            else
+            {
+                JTextField numOfRacers = new JTextField(20);
+                TEPanel.add(new JLabel("Number of racers in team: "));
+                TEPanel.add(numOfRacers);
+                button = new JButton("Find");
+                button.addActionListener(
+                    event -> {
+                        String[] info = {
+                            name.getText(), numOfRacers.getText()};
+                        findObjs(this.teams, info);
+                    }
+                );
+            }
+
+            TEPanel.add(button);
+            TEPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+            this.add(TEPanel);
+            this.pack();
+        }
+    }
+
+    class TrackFEA extends JDialog
+    {
+        private List<Track> tracks;
+        private JPanel TRPanel;
+
+        //type: 0 - find, 1 - add, 2 - edit
+        public TrackFEA(JFrame owner, List<Track>_tracks, int type)
+        {
+            super(owner, "FEA Tracks", false);
+            this.tracks = _tracks;
+            JTextField name = new JTextField(20);
+            JTextField country = new JTextField(20);
+            JButton button;
+            if(type == 2)
+            {
+                name.setText(this.tracks.get(0).getName());
+                country.setText(this.tracks.get(0).getCountry());
+                button = new JButton("Edit");
+                button.addActionListener(
+                    event -> {
+                        this.tracks.get(0).setName(name.getText());
+                        this.tracks.get(0).setCountry(country.getText());
+                        rHandler.saveData(this.tracks.get(0));
+                        rHandler.loadData();
+                        LoadTracksTable();
+                        LoadCompsTable();
+                    }
+                );
+            }
+            else if(type == 1)
+            {
+                button = new JButton("Add");
+                button.addActionListener(
+                    event -> {
+                        Track track = new Track(name.getText(), country.getText());
+                        rHandler.addTrack(track);
+                        LoadTracksTable();
+                    }
+                );
+            }
+            else
+            {
+                button = new JButton("Find");
+                button.addActionListener(
+                    event -> {
+                        String[] info = {
+                            name.getText(), country.getText()};
+                        findObjs(this.tracks, info);
+                    }
+                );
+            }
+
+            GridLayout GLout = new GridLayout();
+            GLout.setColumns(2);
+            GLout.setRows(5);
+            GLout.setVgap(10);
+            TRPanel = new JPanel();
+            TRPanel.setLayout(GLout);
+            TRPanel.add(new JLabel("Name of track: "));
+            TRPanel.add(name);
+            TRPanel.add(new JLabel("Country of racer: "));
+            TRPanel.add(country);
+            TRPanel.add(button);
+
+            TRPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+            this.add(TRPanel);
             this.pack();
         }
     }

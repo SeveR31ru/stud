@@ -45,9 +45,9 @@ public class RaceHandler
         if(index != -1)
         {
             removeData(racer);
-            racers = loadRacers();
-            teams = loadTeams();
-            comps = loadComps();
+            loadRacers();
+            loadTeams();
+            loadComps();
             return true;
         }
         return false;
@@ -75,8 +75,8 @@ public class RaceHandler
         if(index != -1)
         {
             removeData(team);
-            racers = loadRacers();
-            teams = loadTeams();
+            loadRacers();
+            loadTeams();
             return true;
         }
         return false;
@@ -104,8 +104,8 @@ public class RaceHandler
         if(index != -1)
         {
             removeData(track);
-            tracks = loadTracks();
-            comps = loadComps();
+            loadTracks();
+            loadComps();
             return true;
         }
         return false;
@@ -152,19 +152,18 @@ public class RaceHandler
         session = factory.getCurrentSession();
         try 
         {		
-            racers = loadRacers();
-            teams = loadTeams();
-            tracks = loadTracks();
-            comps = loadComps();
+            loadRacers();
+            loadTeams();
+            loadTracks();
+            loadComps();
 		}
 		finally {
 			factory.close();
 		}
     }
 
-    public List<Racer> loadRacers()
+    public void loadRacers()
     {
-        List<Racer> loadedRacers = null;
         factory = new Configuration()
 								.configure("hibernate.cfg.xml")
                                 .addAnnotatedClass(Racer.class)
@@ -174,7 +173,7 @@ public class RaceHandler
         try 
         {		
             session.beginTransaction();
-            loadedRacers = new ArrayList<Racer>( session.createCriteria(Racer.class).list() );
+            racers = new ArrayList<Racer>( session.createCriteria(Racer.class).list() );
             session.getTransaction().commit();
         }
         catch(Throwable t)
@@ -185,12 +184,11 @@ public class RaceHandler
         {
             factory.close();
         }
-        return removeCopies(loadedRacers);
+        racers = removeCopies(racers);
     }
     
-    public List<Team> loadTeams()
+    public void loadTeams()
     {
-        List<Team> loadedTeams = null;
         factory = new Configuration()
 								.configure("hibernate.cfg.xml")
                                 .addAnnotatedClass(Team.class)
@@ -200,7 +198,7 @@ public class RaceHandler
         try 
         {		
             session.beginTransaction();
-            loadedTeams = new ArrayList<Team>( session.createCriteria(Team.class).list() );
+            teams = new ArrayList<Team>( session.createCriteria(Team.class).list() );
             session.getTransaction().commit();
         }
         catch(Throwable t)
@@ -211,12 +209,11 @@ public class RaceHandler
         {
             factory.close();
         }
-        return removeCopies(loadedTeams);
+        teams = removeCopies(teams);
     }
     
-    public List<Track> loadTracks()
+    public void loadTracks()
     {
-        List<Track> loadedTracks = null;
         factory = new Configuration()
 								.configure("hibernate.cfg.xml")
                                 .addAnnotatedClass(Track.class)
@@ -226,7 +223,7 @@ public class RaceHandler
         try 
         {		
             session.beginTransaction();
-            loadedTracks = new ArrayList<Track>( session.createCriteria(Track.class).list() );
+            tracks = new ArrayList<Track>( session.createCriteria(Track.class).list() );
             session.getTransaction().commit();
         }
         catch(Throwable t)
@@ -237,12 +234,11 @@ public class RaceHandler
         {
             factory.close();
         }
-        return removeCopies(loadedTracks);
+        tracks = removeCopies(tracks);
     }
     
-    public List<Competition> loadComps()
+    public void loadComps()
     {
-        List<Competition> loadedComps = null;
         factory = new Configuration()
 								.configure("hibernate.cfg.xml")
                                 .addAnnotatedClass(Competition.class)
@@ -252,7 +248,7 @@ public class RaceHandler
         try 
         {		
             session.beginTransaction();
-            loadedComps = new ArrayList<Competition>( session.createCriteria(Competition.class).list() );
+            comps = new ArrayList<Competition>( session.createCriteria(Competition.class).list() );
             session.getTransaction().commit();
         }
         catch(Throwable t)
@@ -263,7 +259,7 @@ public class RaceHandler
         {
             factory.close();
         }
-        return removeCopies(loadedComps);
+        comps = removeCopies(comps);
     }
 
     public <T> void saveList(List<T> list)

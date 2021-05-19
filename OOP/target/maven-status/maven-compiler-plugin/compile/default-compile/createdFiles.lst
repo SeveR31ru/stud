@@ -4,6 +4,7 @@ MainMenu$1.class
 MainMenu$5.class
 MainMenu.class
 MainMenu$6.class
+MainMenu$TeamFEA.class
 MainMenu$CompViewer.class
 MainMenu$RacerViewer.class
 Races\Competition.class
@@ -13,6 +14,7 @@ Races\Team.class
 Races\RaceHandler.class
 Races\Track.class
 MainMenu$4.class
+MainMenu$TrackFEA.class
 GUI.class
 MainMenu$RacerFEA.class
 Races\Racer.class
