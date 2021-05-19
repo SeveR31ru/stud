@@ -18,14 +18,14 @@ public class Competition
     @Column(name="date")
     private Date date;
 
-    @OneToOne (optional=false)
+    @OneToOne (optional=false, cascade = CascadeType.ALL)
     //@JoinColumn (name="trackid")
     private Track track;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER)
     private List<Racer>racers;
 
-    @OneToOne (optional=false)
+    @OneToOne (optional=false, cascade = CascadeType.ALL)
     //@JoinColumn (name="id")
     private Racer winner;
 
@@ -97,6 +97,19 @@ public class Competition
         return false;
     }
 
+    public boolean removeTrack(Track _track)
+    {
+        if(_track != null)
+        {
+            if(track == _track)
+            {
+                track = null;
+                return true;
+            }
+        }
+        return false;
+    }
+
     public ArrayList<Racer> getRacers()
     {
         return new ArrayList<Racer>(racers);
@@ -127,6 +140,8 @@ public class Competition
         if(racer != null)
         {
             racers.remove(racer);
+            if(winner == racer)
+                winner = null;
             return true;
         }
         return false;

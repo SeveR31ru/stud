@@ -41,6 +41,8 @@ class MainMenu
     private JScrollPane compsPane;
     private CompViewer compViewer;
 
+    int selectedRow = -1;
+
     public MainMenu()
     {
         this.rHandler = new RaceHandler();
@@ -113,11 +115,21 @@ class MainMenu
 
         mainFrame.pack();
         mainFrame.setVisible(true);
+
+        RacerFEA r = new RacerFEA(mainFrame, rHandler.getRacers(), 1);
+        r.setVisible(true);
     }
 
     private void PrepareTables()
     {
-        //============================RACERS============================//
+        LoadRacersTable();
+        LoadTeamsTable();
+        LoadTracksTable();
+        LoadCompsTable();
+    }
+
+    private void LoadRacersTable()
+    {
         String[] racersColumns = {"ID", "NAME", "SURNAME", "TEAM", "SCORE"};
         racersModel = new DefaultTableModel(){
             @Override
@@ -125,9 +137,8 @@ class MainMenu
                 if(columnIndex == 3)
                 {
                     showObj(rHandler.getRacers().get(rowIndex).getTeam());
-                    /*Racer toPrint = rHandler.getRacers().get(rowIndex);
-                    System.out.println("Show " + toPrint.getName() + "'s team");*/
                 }
+                selectedRow = rowIndex;
                 return false;
             }
         };
@@ -153,8 +164,16 @@ class MainMenu
         racersTable.setAutoCreateRowSorter(true);    //сортировка в одну строку? Там можно было что ли?!?!?!
         racersPane = new JScrollPane(racersTable);
         racersPane.setPreferredSize(new Dimension(630, 380));
+        if(racerViewer != null)
+        {
+            racerViewer.updateInfo(racersList, racersPane);
+        }
+        else
+            racerViewer = new RacerViewer(mainFrame, racersList, racersPane, true);
+    }
 
-        //============================TEAMS============================//
+    private void LoadTeamsTable()
+    {
         String[] teamsColumns = {"ID", "NAME", "RACERS IN TEAM"};
         teamsModel = new DefaultTableModel(){
             @Override
@@ -163,6 +182,7 @@ class MainMenu
                 {
                     showObjs(rHandler.getTeams().get(rowIndex).getRacers());
                 }
+                selectedRow = rowIndex;
                 return false;
             }
         };
@@ -186,12 +206,19 @@ class MainMenu
         teamsTable.setAutoCreateRowSorter(true);    //сортировка в одну строку? Там можно было что ли?!?!?!
         teamsPane = new JScrollPane(teamsTable);
         teamsPane.setPreferredSize(new Dimension(530, 380));
+        if(teamViewer != null)
+            teamViewer.updateInfo(teamsList, teamsPane);
+        else
+            teamViewer = new TeamViewer(mainFrame, teamsList, teamsPane, true);
+    }
 
-        //============================TRACKS============================//
+    private void LoadTracksTable()
+    {
         String[] tracksColumns = {"ID", "NAME", "COUNTRY"};
         tracksModel = new DefaultTableModel(){
             @Override
             public boolean isCellEditable(int rowIndex, int columnIndex) {
+                selectedRow = rowIndex;
                 return false;
             }
         };
@@ -215,8 +242,14 @@ class MainMenu
         tracksTable.setAutoCreateRowSorter(true);    //сортировка в одну строку? Там можно было что ли?!?!?!
         tracksPane = new JScrollPane(tracksTable);
         tracksPane.setPreferredSize(new Dimension(530, 380));
+        if(trackViewer != null)
+            trackViewer.updateInfo(tracksList, tracksPane);
+        else
+            trackViewer = new TrackViewer(mainFrame, tracksList, tracksPane, true);
+    }
 
-        //============================COMPETITIONS============================//
+    private void LoadCompsTable()
+    {
         String[] compsColumns = {"ID", "NAME", "DATE", "TRACK", "RACERS", "WINNER"};
         compsModel = new DefaultTableModel(){
             @Override
@@ -224,31 +257,16 @@ class MainMenu
                 if(columnIndex == 3)
                 {
                     showObj(rHandler.getComps().get(rowIndex).getTrack());
-                    /*Track trackToShow = rHandler.getComps().get(rowIndex).getTrack();
-                    List<Track>trackList = new ArrayList<Track>();
-                    trackList.add(trackToShow);
-                    TrackViewer trackShown = new TrackViewer(mainFrame, trackList, getPane(trackList) ,false);
-                    trackShown.setVisible(true);
-                    System.out.println("Show track's info");*/
                 }
                 else if(columnIndex == 4)
                 {
                     showObjs(rHandler.getComps().get(rowIndex).getRacers());
-                    /*Competition comp = rHandler.getComps().get(rowIndex);
-                    RacerViewer racersInCompViewer = new RacerViewer(mainFrame, comp.getRacers(), getPane(comp.getRacers()), false);
-                    racersInCompViewer.setVisible(true);
-                    System.out.println("Show racers in the competition");*/
                 }
                 else if(columnIndex == 5)
                 {
                     showObj(rHandler.getComps().get(rowIndex).getWinner());
-                    /*Competition comp = rHandler.getComps().get(rowIndex);
-                    List<Racer>racerList = new ArrayList<Racer>();
-                    racerList.add(comp.getWinner());
-                    RacerViewer winnerViewer = new RacerViewer(mainFrame, racerList, getPane(racerList), false);
-                    winnerViewer.setVisible(true);
-                    System.out.println("Show winner in the competition");*/
                 }
+                selectedRow = rowIndex;
                 return false;
             }
         };
@@ -274,11 +292,12 @@ class MainMenu
         compsTable.getColumnModel().getColumn(4).setMaxWidth(70);
         compsTable.setEnabled(true);
         compsTable.setAutoCreateRowSorter(true);    //сортировка в одну строку? Там можно было что ли?!?!?!
-        /*compsTable.getColumnModel().getColumn(2).setPreferredWidth(200);    //DATE column
-        compsTable.getColumnModel().getColumn(4).setPreferredWidth(200);    //NUMBER OF RACERS column
-        compsTable.getColumnModel().getColumn(5).setPreferredWidth(200);    //NUMBER OF RACERS column*/
         compsPane = new JScrollPane(compsTable);
         compsPane.setPreferredSize(new Dimension(780, 380));
+        if(compViewer != null)
+            compViewer.updateInfo(compsList, compsPane);
+        else
+            compViewer = new CompViewer(mainFrame, compsList, compsPane, true);
     }
 
     private <T> JScrollPane getPane(List<T> objs)  //Using for find
@@ -299,6 +318,7 @@ class MainMenu
                         Racer toPrint = (Racer)objs.get(rowIndex);
                         showObj(toPrint.getTeam());
                     }
+                    selectedRow = rowIndex;
                     return false;
                 }
             };
@@ -327,6 +347,7 @@ class MainMenu
                         Team team = (Team)objs.get(rowIndex);
                         showObjs(team.getRacers());
                     }
+                    selectedRow = rowIndex;
                     return false;
                 }
             };
@@ -347,6 +368,7 @@ class MainMenu
             tModel = new DefaultTableModel(){
                 @Override
                 public boolean isCellEditable(int rowIndex, int columnIndex) {
+                    selectedRow = rowIndex;
                     return false;
                 }
             };
@@ -397,6 +419,7 @@ class MainMenu
                         winnerViewer.setVisible(true);
                         System.out.println("Show winner in the competition");*/
                     }
+                    selectedRow = rowIndex;
                     return false;
                 }
             };
@@ -488,6 +511,189 @@ class MainMenu
         }
     }
 
+    /* 
+     * info:
+     * 0 - name
+     * 1 - surname
+     * 2 - teamID
+     * 3 - score (may be > < =)
+    */
+    private <T> void findObjs(List<T> objs, String[] info)
+    {
+        if(objs.get(0).getClass() == Racer.class)
+        {
+            List<Racer> racersToShow = new ArrayList<Racer>();
+            Racer curRacer;
+            int passFlag; //name = 1, surname = 2, team = 4, score = 8
+            for(int i = 0; i < objs.size(); ++i)
+            {
+                passFlag = 0;
+                curRacer = (Racer)objs.get(i);
+                if(curRacer.getName().equals(info[0]) || info[0].equals(""))
+                    passFlag += 1;
+                if(curRacer.getSurname().equals(info[1]) || info[1].equals(""))
+                    passFlag += 2;
+                if(info[2].equals("") || curRacer.getTeam().getId() == Integer.parseInt(info[2]))
+                    passFlag += 4;
+                if(info[3].equals(""))
+                    passFlag += 8;
+                else
+                {
+                    int needScore = Integer.parseInt(info[3].substring(1));
+                    if(info[3].charAt(0) == '>')
+                    {
+                        if(curRacer.getScore() > needScore)
+                            passFlag += 8;
+                    }
+                    else if(info[3].charAt(0) == '<')
+                    {
+                        if(curRacer.getScore() < needScore)
+                            passFlag += 8;
+                    }
+                    else
+                    {
+                        if(curRacer.getScore() == needScore)
+                            passFlag += 8;
+                    }
+                }
+                if(passFlag == 15)
+                    racersToShow.add(curRacer);
+            }
+            showObjs(racersToShow);
+            System.out.println("Show found racers here");
+        }
+        else if(objs.get(0).getClass() == Team.class)
+        {
+            List<Team> teamsToShow = new ArrayList<Team>();
+            Team curTeam;
+            int passFlag; //name = 1, racers in team = 2
+            for(int i = 0; i < objs.size(); ++i)
+            {
+                passFlag = 0;
+                curTeam = (Team)objs.get(i);
+                if(curTeam.getName().equals(info[0]) || info[0].equals(""))
+                    passFlag += 1;
+                if(info[1].equals(""))
+                    passFlag += 2;
+                else
+                {
+                    int needRacers = Integer.parseInt(info[1].substring(1));
+                    if(info[1].charAt(0) == '>')
+                    {
+                        if(curTeam.getRacers().size() > needRacers)
+                            passFlag += 2;
+                    }
+                    else if(info[1].charAt(0) == '<')
+                    {
+                        if(curTeam.getRacers().size() < needRacers)
+                            passFlag += 2;
+                    }
+                    else
+                    {
+                        if(curTeam.getRacers().size() == needRacers)
+                            passFlag += 2;
+                    }
+                }
+                if(passFlag == 3)
+                    teamsToShow.add(curTeam);
+            }
+            showObjs(teamsToShow);
+            System.out.println("Show found teams here");
+        }
+        else if(objs.get(0).getClass() == Track.class)
+        {
+            List<Track> tracksToShow = new ArrayList<Track>();
+            Track curTrack;
+            int passFlag; //name = 1, country = 2
+            for(int i = 0; i < objs.size(); ++i)
+            {
+                passFlag = 0;
+                curTrack = (Track)objs.get(i);
+                if(info[0].equals("") || curTrack.getName().equals(info[0]))
+                    passFlag += 1;
+                if(info[1].equals("") || curTrack.getCountry().equals(info[1]))
+                    passFlag += 2;
+                if(passFlag == 3)
+                    tracksToShow.add(curTrack);
+            }
+            showObjs(tracksToShow);
+            System.out.println("Show found tracks here");
+        }
+        else
+        {
+            List<Competition> compsToShow = new ArrayList<Competition>();
+            Competition curComp;
+            int passFlag; //name = 1, date (> < =) = 2, trackname = 4, racers = 8, winner = 16
+            for(int i = 0; i < objs.size(); ++i)
+            {
+                passFlag = 0;
+                curComp = (Competition)objs.get(i);
+                if(info[0].equals("") || curComp.getName().equals(info[0]))
+                    passFlag += 1;
+
+                if(info[1].equals(""))
+                    passFlag += 2;
+                else
+                {
+                    long needDate = Integer.parseInt(info[1].substring(1));
+                    if(info[1].charAt(0) == '>')
+                    {
+                        if(curComp.getDate().getTime() > needDate)
+                            passFlag += 2;
+                    }
+                    else if(info[1].charAt(0) == '<')
+                    {
+                        if(curComp.getDate().getTime() < needDate)
+                            passFlag += 2;
+                    }
+                    else
+                    {
+                        if(curComp.getDate().getTime() == needDate)
+                            passFlag += 2;
+                    }
+                }
+
+                if(info[2].equals("") || curComp.getTrack().getName().equals(info[2]))
+                    passFlag += 4;
+
+                if(info[3].equals(""))
+                    passFlag += 8;
+                else
+                {
+                    int needRacers = Integer.parseInt(info[3].substring(1));
+                    if(info[3].charAt(0) == '>')
+                    {
+                        if(curComp.getRacers().size() > needRacers)
+                            passFlag += 8;
+                    }
+                    else if(info[3].charAt(0) == '<')
+                    {
+                        if(curComp.getRacers().size() < needRacers)
+                            passFlag += 8;
+                    }
+                    else
+                    {
+                        if(curComp.getRacers().size() == needRacers)
+                            passFlag += 8;
+                    }
+                }
+
+                if(info[4].equals(""))
+                    passFlag += 16;
+                else
+                {
+                    int id = Integer.parseInt(info[4]);
+                    if(curComp.getWinner().getId() == id)
+                        passFlag += 16;
+                }
+                if(passFlag == 31)
+                    compsToShow.add(curComp);
+            }
+            showObjs(compsToShow);
+            System.out.println("Show found competitions here");
+        }
+    }
+
     class RacerViewer extends JDialog
     {
         private List<Racer> racers;
@@ -506,6 +712,14 @@ class MainMenu
             this.add(RV_panel);
 
             this.pack();
+        }
+
+        public void updateInfo(List<Racer>_racers, JScrollPane jpane)
+        {
+            this.racers = _racers;
+            RV_panel.removeAll();
+            RV_panel.add(jpane);
+            RV_panel.updateUI();
         }
 
         private void addMenu()
@@ -542,6 +756,15 @@ class MainMenu
             JMenuItem removeRacer = new JMenuItem("Remove racer");
             removeRacer.addActionListener(
             event -> {
+                if(selectedRow != -1)
+                {
+                    Racer racer = this.racers.get(selectedRow);
+                    rHandler.removeRacer(racer);
+                    selectedRow = -1;
+                    LoadRacersTable();
+                    LoadTeamsTable();
+                    LoadCompsTable();
+                }
                 System.out.println("Remove racer here");
             } );
 
@@ -569,6 +792,14 @@ class MainMenu
             this.add(TV_panel);
 
             this.pack();
+        }
+
+        public void updateInfo(List<Team>_teams, JScrollPane jpane)
+        {
+            this.teams = _teams;
+            TV_panel.removeAll();
+            TV_panel.add(jpane);
+            TV_panel.updateUI();
         }
 
         private void addMenu()
@@ -603,6 +834,14 @@ class MainMenu
             JMenuItem removeTeam = new JMenuItem("Remove team");
             removeTeam.addActionListener(
             event -> {
+                if(selectedRow != -1)
+                {
+                    Team team = this.teams.get(selectedRow);
+                    rHandler.removeTeam(team);
+                    selectedRow = -1;
+                    LoadRacersTable();
+                    LoadTeamsTable();
+                }
                 System.out.println("Remove team here");
             } );
             teamMenu.add(removeTeam);
@@ -614,7 +853,7 @@ class MainMenu
     class TrackViewer extends JDialog
     {
         private List<Track> tracks;
-        private JPanel TeamV_panel;
+        private JPanel TrackV_panel;
 
         public TrackViewer(JFrame owner, List<Track>_tracks, JScrollPane _tracksPane, boolean editable)
         {
@@ -625,11 +864,19 @@ class MainMenu
             if(editable)
                 addMenu();
 
-            TeamV_panel = new JPanel();
-            TeamV_panel.add(_tracksPane);
-            this.add(TeamV_panel);
+            TrackV_panel = new JPanel();
+            TrackV_panel.add(_tracksPane);
+            this.add(TrackV_panel);
 
             this.pack();
+        }
+
+        public void updateInfo(List<Track>_tracks, JScrollPane jpane)
+        {
+            this.tracks = _tracks;
+            TrackV_panel.removeAll();
+            TrackV_panel.add(jpane);
+            TrackV_panel.updateUI();
         }
 
         private void addMenu()
@@ -693,6 +940,14 @@ class MainMenu
             this.pack();
         }
 
+        public void updateInfo(List<Competition>_comps, JScrollPane jpane)
+        {
+            this.comps = _comps;
+            CV_panel.removeAll();
+            CV_panel.add(jpane);
+            CV_panel.updateUI();
+        }
+
         private void addMenu()
         {
             JMenuBar menubar = new JMenuBar();
@@ -730,6 +985,73 @@ class MainMenu
             compMenu.add(removeCompetition);
 
             this.setJMenuBar(menubar);
+        }
+    }
+
+    //============================EDIT/ADD============================//
+    class RacerFEA extends JDialog
+    {
+        private List<Racer> racers;
+        private JPanel RPanel;
+
+        //type: 0 - find, 1 - add, 2 - edit
+        public RacerFEA(JFrame owner, List<Racer>_racers, int type)
+        {
+            super(owner, "FEA Racers", false);
+            this.racers = _racers;
+            JTextField name = new JTextField(20);
+            JTextField surname = new JTextField(20);
+            JTextField teamid = new JTextField(20);
+            JTextField score = new JTextField(20);
+            JButton button;
+            if(type == 2)
+            {
+                name.setText(this.racers.get(0).getName());
+                surname.setText(this.racers.get(0).getSurname());
+                teamid.setText("" + this.racers.get(0).getTeam().getId());
+                score.setText("" + this.racers.get(0).getScore());
+                button = new JButton("Edit");
+            }
+            else if(type == 1)
+            {
+                button = new JButton("Add");
+                button.addActionListener(
+                    event -> {
+                        Racer racer = new Racer(name.getText(), surname.getText(), null);
+                        racer.setScore(Integer.parseInt(score.getText()));
+                        Team team = rHandler.getTeamByID(Integer.parseInt(teamid.getText()));
+                        team.addRacer(racer);
+                        rHandler.addRacer(racer);
+                        LoadRacersTable();
+                        LoadTeamsTable();
+                    }
+                );
+            }
+            else
+            {
+                button = new JButton("Find");
+                
+            }
+
+            GridLayout GLout = new GridLayout();
+            GLout.setColumns(2);
+            GLout.setRows(5);
+            GLout.setVgap(10);
+            RPanel = new JPanel();
+            RPanel.setLayout(GLout);
+            RPanel.add(new JLabel("Name of racer: "));
+            RPanel.add(name);
+            RPanel.add(new JLabel("Surname of racer: "));
+            RPanel.add(surname);
+            RPanel.add(new JLabel("Team ID of racer: "));
+            RPanel.add(teamid);
+            RPanel.add(new JLabel("Score of racer: "));
+            RPanel.add(score);
+            RPanel.add(button);
+
+            RPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+            this.add(RPanel);
+            this.pack();
         }
     }
 }

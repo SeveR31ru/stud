@@ -19,16 +19,12 @@ public class RaceHandler
 
     public RaceHandler()
     {
-        System.out.println("Time to check save data!");
         System.out.println("Loading...");
         loadData();
-        /*System.out.println("Saving...");
-        saveList(racers);*/
     }
 
     public List<Racer> getRacers() 
     {
-        //return new ArrayList<>(racers);
         return racers;
     }
 
@@ -37,6 +33,7 @@ public class RaceHandler
         if(racer != null)
         {
             racers.add(racer);
+            saveData(racer);
             return true;
         }
         return false;
@@ -47,16 +44,14 @@ public class RaceHandler
         int index = racers.indexOf(racer);
         if(index != -1)
         {
-            racers.remove(index);
+            removeData(racer);
+            racers = loadRacers();
+            teams = loadTeams();
+            comps = loadComps();
             return true;
         }
         return false;
     }
-
-    /*public void setRacers(List<Racer> racers) 
-    {
-        this.racers = racers;
-    }*/
 
     public List<Team> getTeams() 
     {
@@ -68,6 +63,7 @@ public class RaceHandler
         if(team != null)
         {
             teams.add(team);
+            saveData(team);
             return true;
         }
         return false;
@@ -78,16 +74,13 @@ public class RaceHandler
         int index = teams.indexOf(team);
         if(index != -1)
         {
-            teams.remove(index);
+            removeData(team);
+            racers = loadRacers();
+            teams = loadTeams();
             return true;
         }
         return false;
     }
-
-    /*public void setTeams(List<Team> teams) 
-    {
-        this.teams = teams;
-    }*/
 
     public List<Track> getTracks() 
     {
@@ -99,6 +92,7 @@ public class RaceHandler
         if(track != null)
         {
             tracks.add(track);
+            saveData(track);
             return true;
         }
         return false;
@@ -109,16 +103,13 @@ public class RaceHandler
         int index = tracks.indexOf(track);
         if(index != -1)
         {
-            tracks.remove(index);
+            removeData(track);
+            tracks = loadTracks();
+            comps = loadComps();
             return true;
         }
         return false;
     }
-
-    /*public void setTracks(List<Track> tracks) 
-    {
-        this.tracks = tracks;
-    }*/
 
     public List<Competition> getComps() 
     {
@@ -130,6 +121,7 @@ public class RaceHandler
         if(comp != null)
         {
             comps.add(comp);
+            saveData(comp);
             return true;
         }
         return false;
@@ -141,15 +133,11 @@ public class RaceHandler
         if(index != -1)
         {
             comps.remove(index);
+            removeData(comp);
             return true;
         }
         return false;
     }
-
-    /*public void setComps(List<Competition> comps) 
-    {
-        this.comps = comps;
-    }*/
 
     public void loadData()
     {
@@ -300,7 +288,7 @@ public class RaceHandler
         session.getTransaction().commit();
     }
 
-    /*public <T> void removeList(List<T> list)
+    public <T> void removeList(List<T> list)
     {
         for(T el : list)
             removeData(el);
@@ -320,7 +308,7 @@ public class RaceHandler
         session.beginTransaction();
         session.delete(data);
         session.getTransaction().commit();
-    }*/
+    }
 
     private <T> List<T> removeCopies(List<T> list)
     {
@@ -331,5 +319,37 @@ public class RaceHandler
                 resultList.add(el);
         }
         return resultList;
+    }
+
+    public Racer getRacerByID(int id)
+    {
+        for(Racer r : racers)
+            if(r.getId() == id)
+                return r;
+        return null;
+    }
+
+    public Team getTeamByID(int id)
+    {
+        for(Team t : teams)
+            if(t.getId() == id)
+                return t;
+        return null;
+    }
+
+    public Track getTrackByID(int id)
+    {
+        for(Track t : tracks)
+            if(t.getId() == id)
+                return t;
+        return null;
+    }
+
+    public Competition getCompByID(int id)
+    {
+        for(Competition c : comps)
+            if(c.getId() == id)
+                return c;
+        return null;
     }
 }

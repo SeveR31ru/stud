@@ -17,7 +17,7 @@ public class Racer
     @Column(name="surname")
     private String surname;
 
-    @ManyToOne (optional=false)
+    @ManyToOne (optional=false, cascade = CascadeType.ALL)
     @JoinColumn (name="teamid")
     private Team team;
 
@@ -74,6 +74,19 @@ public class Racer
         {
             team = newTeam;
             return true;
+        }
+        return false;
+    }
+
+    public boolean removeTeam(Team _team)
+    {
+        if(_team != null)
+        {
+            if(team == _team)
+            {
+                team = null;
+                return true;
+            }
         }
         return false;
     }

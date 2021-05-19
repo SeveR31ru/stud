@@ -14,6 +14,7 @@ Races\RaceHandler.class
 Races\Track.class
 MainMenu$4.class
 GUI.class
+MainMenu$RacerFEA.class
 Races\Racer.class
 MainMenu$2.class
 MainMenu$7.class

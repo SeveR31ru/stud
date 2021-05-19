@@ -2,15 +2,37 @@ CREATE DATABASE races;
 
 use races;
 
-CREATE TABLE `racers` (`id` int(11) PRIMARY KEY AUTO_INCREMENT, `name` TEXT, `surname` TEXT,
- `score` int(11), `teamid` int(11)) AUTO_INCREMENT=1;
-
 CREATE TABLE `teams` (`id` int(11) PRIMARY KEY AUTO_INCREMENT, `name` TEXT) AUTO_INCREMENT=1;
+
+CREATE TABLE `racers` (`id` int(11) PRIMARY KEY AUTO_INCREMENT, `name` TEXT, `surname` TEXT,
+ `score` int(11), `teamid` int(11),
+ FOREIGN KEY (teamid) REFERENCES teams(id) ON DELETE CASCADE) AUTO_INCREMENT=1;
  
 CREATE TABLE `tracks` (`id` int(11) PRIMARY KEY AUTO_INCREMENT, `name` TEXT,
  `country` TEXT) AUTO_INCREMENT=1;
  
-CREATE TABLE `competitions` (`id` int(11) PRIMARY KEY AUTO_INCREMENT, `name` TEXT, `date` DATE,
- `track_id` int(11), `winner_id` int(11)) AUTO_INCREMENT=1;
+CREATE TABLE `competitions` (`id` int(11) PRIMARY KEY AUTO_INCREMENT, `name` TEXT, `date` DATETIME,
+ `track_id` int(11), `winner_id` int(11),
+ FOREIGN KEY (track_id) REFERENCES tracks(id) ON DELETE CASCADE,
+ FOREIGN KEY (winner_id) REFERENCES racers(id) ON DELETE CASCADE) AUTO_INCREMENT=1;
  
-CREATE TABLE `competitions_racers` (`Competition_id` int(11), `racers_id` int(11));
+CREATE TABLE `competitions_racers` (`Competition_id` int(11), `racers_id` int(11),
+FOREIGN KEY (racers_id) REFERENCES racers(id) ON DELETE CASCADE,
+FOREIGN KEY (Competition_id) REFERENCES competitions(id) ON DELETE CASCADE);
+
+INSERT INTO `teams` (`id`, `name`) VALUES (1,"Team");
+INSERT INTO `teams` (`id`, `name`) VALUES (2,"The Greatests");
+
+INSERT INTO `racers` (`id`, `name`, `surname`, `score`, `teamid`) VALUES (1,"Adam","Smoke",12,1);
+INSERT INTO `racers` (`id`, `name`, `surname`, `score`, `teamid`) VALUES (2,"John","Doe",17,2);
+
+INSERT INTO `tracks` (`id`, `name`, `country`) VALUES (1,"La Mann","France");
+INSERT INTO `tracks` (`id`, `name`, `country`) VALUES (2,"Kazan Road","Russia");
+
+INSERT INTO `competitions` (`id`, `name`, `date`, `track_id`, `winner_id`) VALUES (1,"Test Comp","2018-11-11 13:20:00",2,1);
+INSERT INTO `competitions` (`id`, `name`, `date`, `track_id`, `winner_id`) VALUES (2,"GreatFrance","2019-09-12 17:20:00",1,2);
+
+INSERT INTO `competitions_racers` (`Competition_id`, `racers_id`) VALUES (1,1);
+INSERT INTO `competitions_racers` (`Competition_id`, `racers_id`) VALUES (1,2);
+INSERT INTO `competitions_racers` (`Competition_id`, `racers_id`) VALUES (2,1);
+INSERT INTO `competitions_racers` (`Competition_id`, `racers_id`) VALUES (2,2);
