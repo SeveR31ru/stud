@@ -698,6 +698,7 @@ class MainMenu
     {
         private List<Racer> racers;
         private JPanel RV_panel;
+        private RacerFEA rFEA;
 
         public RacerViewer(JFrame owner, List<Racer>_racers, JScrollPane _racersPane, boolean editable)
         {
@@ -733,6 +734,9 @@ class MainMenu
             JMenuItem findRacer = new JMenuItem("Find racer");
             findRacer.addActionListener(
             event -> {
+                rFEA = new RacerFEA(mainFrame, this.racers, 0);
+                if(rFEA != null)
+                    rFEA.setVisible(true);
                 System.out.println("Find racer here");
             } );
             racerMenu.add(findRacer);
@@ -740,6 +744,16 @@ class MainMenu
             JMenuItem editRacer = new JMenuItem("Edit racer");
             editRacer.addActionListener(
             event -> {
+                if(selectedRow != -1)
+                {
+                    if(rFEA != null)
+                        rFEA.removeAll();
+                    List<Racer>buff = new ArrayList<Racer>();
+                    buff.add(this.racers.get(selectedRow));
+                    rFEA = new RacerFEA(mainFrame, buff, 2);
+                    if(rFEA != null)
+                        rFEA.setVisible(true);
+                }
                 System.out.println("Edit racer here");
             } );
 
@@ -748,6 +762,9 @@ class MainMenu
             JMenuItem addRacer = new JMenuItem("Add racer");
             addRacer.addActionListener(
             event -> {
+                rFEA = new RacerFEA(mainFrame, this.racers, 1);
+                if(rFEA != null)
+                    rFEA.setVisible(true);
                 System.out.println("Add racer here");
             } );
             

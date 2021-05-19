@@ -17,7 +17,7 @@ public class Racer
     @Column(name="surname")
     private String surname;
 
-    @ManyToOne (optional=false, cascade = CascadeType.ALL)
+    @ManyToOne (optional=false)
     @JoinColumn (name="teamid")
     private Team team;
 

@@ -5,8 +5,7 @@ use races;
 CREATE TABLE `teams` (`id` int(11) PRIMARY KEY AUTO_INCREMENT, `name` TEXT) AUTO_INCREMENT=1;
 
 CREATE TABLE `racers` (`id` int(11) PRIMARY KEY AUTO_INCREMENT, `name` TEXT, `surname` TEXT,
- `score` int(11), `teamid` int(11),
- FOREIGN KEY (teamid) REFERENCES teams(id) ON DELETE CASCADE) AUTO_INCREMENT=1;
+ `score` int(11), `teamid` int(11)) AUTO_INCREMENT=1;
  
 CREATE TABLE `tracks` (`id` int(11) PRIMARY KEY AUTO_INCREMENT, `name` TEXT,
  `country` TEXT) AUTO_INCREMENT=1;
