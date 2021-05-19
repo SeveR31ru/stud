@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 public class GUI
@@ -138,6 +139,15 @@ class MainMenu
                 selectedRow = rowIndex;
                 return false;
             }
+
+            @Override
+            public Class getColumnClass(int column)
+            {
+                if(column == 0 || column == 4)
+                    return Integer.class;
+                else
+                    return String.class;
+            }
         };
         racersModel.setColumnIdentifiers(racersColumns);
         List<Racer> racersList = rHandler.getRacers();
@@ -159,6 +169,8 @@ class MainMenu
         racersTable.getColumnModel().getColumn(0).setMaxWidth(100);
         racersTable.setEnabled(true);
         racersTable.setAutoCreateRowSorter(true);    //сортировка в одну строку? Там можно было что ли?!?!?!
+        DefaultTableCellRenderer r = (DefaultTableCellRenderer) racersTable.getDefaultRenderer(Integer.class);
+        r.setHorizontalAlignment(JLabel.LEFT);
         racersPane = new JScrollPane(racersTable);
         racersPane.setPreferredSize(new Dimension(630, 380));
         if(racerViewer != null)
@@ -182,6 +194,15 @@ class MainMenu
                 selectedRow = rowIndex;
                 return false;
             }
+
+            @Override
+            public Class getColumnClass(int column)
+            {
+                if(column == 0 || column == 2)
+                    return Integer.class;
+                else
+                    return String.class;
+            }
         };
         teamsModel.setColumnIdentifiers(teamsColumns);
         List<Team> teamsList = rHandler.getTeams();
@@ -201,6 +222,8 @@ class MainMenu
         teamsTable.getColumnModel().getColumn(0).setMaxWidth(100);
         teamsTable.setEnabled(true);
         teamsTable.setAutoCreateRowSorter(true);    //сортировка в одну строку? Там можно было что ли?!?!?!
+        DefaultTableCellRenderer r = (DefaultTableCellRenderer) teamsTable.getDefaultRenderer(Integer.class);
+        r.setHorizontalAlignment(JLabel.LEFT);
         teamsPane = new JScrollPane(teamsTable);
         teamsPane.setPreferredSize(new Dimension(530, 380));
         if(teamViewer != null)
@@ -217,6 +240,15 @@ class MainMenu
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 selectedRow = rowIndex;
                 return false;
+            }
+
+            @Override
+            public Class getColumnClass(int column)
+            {
+                if(column == 0)
+                    return Integer.class;
+                else
+                    return String.class;
             }
         };
         tracksModel.setColumnIdentifiers(tracksColumns);
@@ -237,6 +269,8 @@ class MainMenu
         tracksTable.getColumnModel().getColumn(0).setMaxWidth(100);
         tracksTable.setEnabled(true);
         tracksTable.setAutoCreateRowSorter(true);    //сортировка в одну строку? Там можно было что ли?!?!?!
+        DefaultTableCellRenderer r = (DefaultTableCellRenderer) tracksTable.getDefaultRenderer(Integer.class);
+        r.setHorizontalAlignment(JLabel.LEFT);
         tracksPane = new JScrollPane(tracksTable);
         tracksPane.setPreferredSize(new Dimension(530, 380));
         if(trackViewer != null)
@@ -250,7 +284,8 @@ class MainMenu
         String[] compsColumns = {"ID", "NAME", "DATE", "TRACK", "RACERS", "WINNER"};
         compsModel = new DefaultTableModel(){
             @Override
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
+            public boolean isCellEditable(int rowIndex, int columnIndex) 
+            {
                 if(columnIndex == 3)
                 {
                     showObj(rHandler.getComps().get(rowIndex).getTrack());
@@ -265,6 +300,15 @@ class MainMenu
                 }
                 selectedRow = rowIndex;
                 return false;
+            }
+
+            @Override
+            public Class getColumnClass(int column)
+            {
+                if(column == 0 || column == 4)
+                    return Integer.class;
+                else
+                    return String.class;
             }
         };
         compsModel.setColumnIdentifiers(compsColumns);
@@ -289,6 +333,8 @@ class MainMenu
         compsTable.getColumnModel().getColumn(4).setMaxWidth(70);
         compsTable.setEnabled(true);
         compsTable.setAutoCreateRowSorter(true);    //сортировка в одну строку? Там можно было что ли?!?!?!
+        DefaultTableCellRenderer r = (DefaultTableCellRenderer) compsTable.getDefaultRenderer(Integer.class);
+        r.setHorizontalAlignment(JLabel.LEFT);
         compsPane = new JScrollPane(compsTable);
         compsPane.setPreferredSize(new Dimension(780, 380));
         if(compViewer != null)
@@ -309,7 +355,8 @@ class MainMenu
             String[] racersColumns = {"ID", "NAME", "SURNAME", "TEAM", "SCORE"};
             tModel = new DefaultTableModel(){
                 @Override
-                public boolean isCellEditable(int rowIndex, int columnIndex) {
+                public boolean isCellEditable(int rowIndex, int columnIndex) 
+                {
                     if(columnIndex == 3)
                     {
                         Racer toPrint = (Racer)objs.get(rowIndex);
@@ -317,6 +364,15 @@ class MainMenu
                     }
                     selectedRow = rowIndex;
                     return false;
+                }
+
+                @Override
+                public Class getColumnClass(int column)
+                {
+                    if(column == 0 || column == 4)
+                        return Integer.class;
+                    else
+                        return String.class;
                 }
             };
             tModel.setColumnIdentifiers(racersColumns);
@@ -347,6 +403,15 @@ class MainMenu
                     selectedRow = rowIndex;
                     return false;
                 }
+
+                @Override
+                public Class getColumnClass(int column)
+                {
+                    if(column == 0 || column == 2)
+                        return Integer.class;
+                    else
+                        return String.class;
+                }
             };
             tModel.setColumnIdentifiers(teamsColumns);
             String[] teamInfo = new String[3];
@@ -367,6 +432,15 @@ class MainMenu
                 public boolean isCellEditable(int rowIndex, int columnIndex) {
                     selectedRow = rowIndex;
                     return false;
+                }
+
+                @Override
+                public Class getColumnClass(int column)
+                {
+                    if(column == 0)
+                        return Integer.class;
+                    else
+                        return String.class;
                 }
             };
             tModel.setColumnIdentifiers(tracksColumns);
@@ -391,33 +465,28 @@ class MainMenu
                     {
                         Competition comp = (Competition)objs.get(rowIndex);
                         showObj(comp.getTrack());
-                        /*Track trackToShow = comp.getTrack();
-                        List<Track>trackList = new ArrayList<Track>();
-                        trackList.add(trackToShow);
-                        TrackViewer trackShown = new TrackViewer(mainFrame, trackList, getPane(trackList), false);
-                        trackShown.setVisible(true);
-                        System.out.println("Show track's info");*/
                     }
                     else if(columnIndex == 4)
                     {
                         Competition comp = (Competition)objs.get(rowIndex);
                         showObjs(comp.getRacers());
-                        /*RacerViewer racersInCompViewer = new RacerViewer(mainFrame, comp.getRacers(), getPane(comp.getRacers()), false);
-                        racersInCompViewer.setVisible(true);
-                        System.out.println("Show racers in the competition");*/
                     }
                     else if(columnIndex == 5)
                     {
                         Competition comp = (Competition)objs.get(rowIndex);
                         showObj(comp.getWinner());
-                        /*List<Racer>racerList = new ArrayList<Racer>();
-                        racerList.add(comp.getWinner());
-                        RacerViewer winnerViewer = new RacerViewer(mainFrame, racerList, getPane(racerList), false);
-                        winnerViewer.setVisible(true);
-                        System.out.println("Show winner in the competition");*/
                     }
                     selectedRow = rowIndex;
                     return false;
+                }
+
+                @Override
+                public Class getColumnClass(int column)
+                {
+                    if(column == 0 || column == 4)
+                        return Integer.class;
+                    else
+                        return String.class;
                 }
             };
             tModel.setColumnIdentifiers(compsColumns);
@@ -439,6 +508,8 @@ class MainMenu
         table.getColumnModel().getColumn(0).setMaxWidth(100);
         table.setEnabled(true);
         table.setAutoCreateRowSorter(true);    //сортировка в одну строку? Там можно было что ли?!?!?!
+        DefaultTableCellRenderer r = (DefaultTableCellRenderer) table.getDefaultRenderer(Integer.class);
+        r.setHorizontalAlignment(JLabel.LEFT);
         jPane = new JScrollPane(table);
         jPane.setPreferredSize(dimension);
         return jPane;
@@ -1257,7 +1328,7 @@ class MainMenu
             TRPanel.setLayout(GLout);
             TRPanel.add(new JLabel("Name of track: "));
             TRPanel.add(name);
-            TRPanel.add(new JLabel("Country of racer: "));
+            TRPanel.add(new JLabel("Country of track: "));
             TRPanel.add(country);
             TRPanel.add(button);
 
